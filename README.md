@@ -11,7 +11,7 @@ ReXodus currentl supports downloading from the following image/video hosts:
 * Attempts to parse and download from other unknown sources
 
 ## How to install and use this repository
-To install these files, copy the contents of this repository to the directory fo your choice. If you have git and pip installed, you can run `pip install git+https://github.com/increasingardor/ReXodus.git`.
+To install these files, copy the contents of this repository to the directory of your choice. If you have git and pip installed, you can run `pip install git+https://github.com/increasingardor/ReXodus.git`.
 
 In either case, then run `pip install -r requirements.txt` to install the packages dependencies.
 
