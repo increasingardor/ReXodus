@@ -19,7 +19,9 @@ The config.py file has places for API credentials from Imgur, Reddit, GfyCat, an
 
 Then run `python rexodus.py` (or `py rexodus.py` on Windows) to launch the GUI.
 
-The GUI is very simple - enter your Reddit username (or the Reddit username of the user you are cataloging) on the left, then click the Browse button and choose a location to save the downloads to - ReXodus will create a directory for each hosting provider within that directory. Click Get Files, and watch the download counter in the lower right corner go up, and the filenames scroll by in the lower left
+The GUI is very simple - enter your Reddit username (or the Reddit username of the user you are cataloging) on the left, then click the Browse button and choose a location to save the downloads to - ReXodus will create a directory for each hosting provider within that directory. You may uncheck any of the providers you do not want files from. Click Get Files, and watch the download counter in the lower right corner go up, and the filenames scroll by in the lower left.
+
+ReXodus checks for the existence of a file before downloading, so if you have already downloaded it the file will be skipped; it looks for duplicate filenames from each individual provider, so you *can* have files named the same from Imgur and from Reddit, for instance, and both will be saved (as they are in separate directories).
 
 ## Disclaimer
 ReXodus is not guaranteed to to continue to work, as these providers may change their APIs, directory structures, page structure, or hosts at any time. Use at your own risk and discretion.
