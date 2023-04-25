@@ -14,6 +14,7 @@ class BaseImage:
     def __init__(self, session: requests.Session, url: str):
         self.session = session
         self.url = url
+        self.ctrl = { "stop": False }
         self.filetype = url.split(".")[len(url.split(".")) - 1]
         self.message = ""
 
@@ -33,11 +34,14 @@ class BaseImage:
                         break
                     file.write(chunk)
             if self.ctrl["stop"]:
-                os.remove(fullpath)
-                self.message = "Downloading stopped"
-                return False
+                return self.endDownload(fullpath)
             self.message = f"Saved {fullpath}\n"
             return True
+        return False
+
+    def endDownload(self, fullpath: str=None):
+        if fullpath:
+            os.remove(fullpath)
         return False
 
     def parse_url(self, url: str, location: str, filename: str=None):
@@ -74,6 +78,8 @@ class ImgurAlbum(BaseImage):
         data = resp.json()
         results = [True * len(data["data"]["images"])]
         for image in data["data"]["images"]:
+            if self.ctrl["stop"]:
+                return self.endDownload()
             self.url = image["link"]
             super().download(location)
         return results
@@ -107,6 +113,8 @@ class RedditAlbum(BaseImage):
         if self.post.media_metadata:
             results = [True * len(self.post.media_metadata.items())]
             for image in self.post.media_metadata.items():
+                if self.ctrl["stop"]:
+                    return self.endDownload()
                 id = image[0]
                 ext = self.parse_filetype(image[1]["m"])
                 self.url = f"{self.base_url}/{id}.{ext}"
@@ -130,6 +138,8 @@ class Erome(BaseImage):
         [files.append(image["data-src"]) for image in soup.find_all("img", {"class": "img-back"})]
         results = [True * len(files)]
         for file in files:
+            if self.ctrl["stop"]:
+                return self.endDownload()
             folder, fullpath = self.parse_url(file, location)
             self.headers["Referrer"] = self.url
             self.headers["Origin"] = f"https://{URL(file).host}"
@@ -145,6 +155,8 @@ class RedGifs(BaseImage):
         super().__init__(session, url)
 
     def download(self, location: str) -> bool:
+        if self.ctrl["stop"]:
+            return self.endDownload()
         gif_resp = self.session.get(f"{self.api}/{self.id}", headers=self.headers)
         gif_data = gif_resp.json()
         self.url = gif_data["gif"]["urls"]["hd"]
@@ -159,6 +171,8 @@ class GfyImage(BaseImage):
         super().__init__(session, url)
 
     def download(self, location: str) -> bool:
+        if self.ctrl["stop"]:
+            return self.endDownload()
         gfy_resp = self.session.get(f"{self.api}/{self.id}", headers=self.headers)
         gif_data = gfy_resp.json()
         self.url = gif_data["gfyItem"]["mp4Url"]
